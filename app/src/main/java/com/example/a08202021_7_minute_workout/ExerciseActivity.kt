@@ -30,11 +30,8 @@ class ExerciseActivity : AppCompatActivity() {
         toolbar_exercise_activity.setNavigationOnClickListener {
             onBackPressed()
         }
-
-        setupRestView()
-
         exerciseList = Constants.defaultExerciseList()
-
+        setupRestView()
     }
 
     override fun onDestroy() {
@@ -90,6 +87,7 @@ class ExerciseActivity : AppCompatActivity() {
             restProgress = 0
         }
 
+        tvUpcomingExerciseName.text = exerciseList!![currentExercisePosition + 1].name
         setRestProgressBar()
     }
 
