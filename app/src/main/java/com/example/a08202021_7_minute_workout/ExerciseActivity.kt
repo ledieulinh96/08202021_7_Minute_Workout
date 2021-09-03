@@ -9,6 +9,7 @@ import android.speech.tts.TextToSpeech
 import android.util.Log
 import android.view.View
 import android.widget.Toast
+import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.activity_exercise.*
 import java.util.*
 import kotlin.collections.ArrayList
@@ -26,6 +27,7 @@ class ExerciseActivity : AppCompatActivity(),  TextToSpeech.OnInitListener{
 
     private var tts: TextToSpeech?= null //Variable for TextTOSpeech
     private var player: MediaPlayer? = null
+    private var exerciseAdapter: ExerciseStatusAdapter? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,6 +46,7 @@ class ExerciseActivity : AppCompatActivity(),  TextToSpeech.OnInitListener{
 
         exerciseList = Constants.defaultExerciseList()
         setupRestView()
+        setupExerciseStatusRecyclerView()
 
     }
 
@@ -168,5 +171,12 @@ class ExerciseActivity : AppCompatActivity(),  TextToSpeech.OnInitListener{
                Log.e("_linh_" + "TTS" + "",": Initialization failed!");
             }
         }
+    }
+
+    private fun setupExerciseStatusRecyclerView() {
+        rvExerciseStatus.layoutManager = LinearLayoutManager(this,
+            LinearLayoutManager.HORIZONTAL, false)
+        exerciseAdapter = ExerciseStatusAdapter(exerciseList!!, this)
+        rvExerciseStatus.adapter = exerciseAdapter
     }
 }
