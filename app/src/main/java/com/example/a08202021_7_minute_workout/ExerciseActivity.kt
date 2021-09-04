@@ -1,5 +1,6 @@
 package com.example.a08202021_7_minute_workout
 
+import android.content.Intent
 import android.media.MediaPlayer
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
@@ -18,6 +19,8 @@ class ExerciseActivity : AppCompatActivity(),  TextToSpeech.OnInitListener{
 
     private var restTimer: CountDownTimer? = null
     private var restProgress = 0
+    private var restTimerDuration: Long = 5
+
     private var exerciseTimer: CountDownTimer? = null
     private var exerciseProgress = 0
     private var exerciseTimerDuration: Long = 30
@@ -45,6 +48,8 @@ class ExerciseActivity : AppCompatActivity(),  TextToSpeech.OnInitListener{
         tts = TextToSpeech(this, this)
 
         exerciseList = Constants.defaultExerciseList()
+        progressBarRest.max = restTimerDuration.toInt()
+        progressBarExercise.max = exerciseTimerDuration.toInt()
         setupRestView()
         setupExerciseStatusRecyclerView()
 
@@ -74,18 +79,20 @@ class ExerciseActivity : AppCompatActivity(),  TextToSpeech.OnInitListener{
 
     //hard code 10s
     private fun setRestProgressBar() {
-        progressBar.progress = restProgress
-        restTimer = object : CountDownTimer(10000, 1000){
+        progressBarRest.progress = restProgress
+        restTimer = object : CountDownTimer(restTimerDuration*1000, 1000){
             override fun onTick(millisUntilFinished: Long) {
                 restProgress++
-                progressBar.progress = 10-restProgress
-                tvTimer.text = (10- restProgress).toString()
+                val currentRestTime = restTimerDuration.toInt()-restProgress
 
-                if (10-restProgress == 5) {
+                progressBarRest.progress = currentRestTime
+                tvTimer.text = currentRestTime.toString()
+
+                if (currentRestTime == 5) {
                     speakOut( exerciseList!![currentExercisePosition + 1].name)
                 }
-                if (10-restProgress in 1..3) {
-                    speakOut((10 - restProgress).toString())
+                if (currentRestTime in 1..3) {
+                    speakOut(currentRestTime.toString())
                 }
             }
 
@@ -105,10 +112,11 @@ class ExerciseActivity : AppCompatActivity(),  TextToSpeech.OnInitListener{
         exerciseTimer = object : CountDownTimer(exerciseTimerDuration*1000, 1000){
             override fun onTick(millisUntilFinished: Long) {
                 exerciseProgress++
-                progressBarExercise.progress = exerciseTimerDuration.toInt() - exerciseProgress
-                tvExerciseTimer.text = (exerciseTimerDuration- exerciseProgress).toString()
-                if (exerciseTimerDuration - exerciseProgress in 1 .. 5) {
-                    speakOut((exerciseTimerDuration - exerciseProgress).toString())
+                val currentExerciseTime = exerciseTimerDuration.toInt() - exerciseProgress
+                progressBarExercise.progress = currentExerciseTime
+                tvExerciseTimer.text = currentExerciseTime.toString()
+                if (currentExerciseTime in 1 .. 5) {
+                    speakOut(currentExerciseTime.toString())
                 }
             }
 
@@ -119,7 +127,9 @@ class ExerciseActivity : AppCompatActivity(),  TextToSpeech.OnInitListener{
                     exerciseAdapter!!.notifyDataSetChanged()
                     setupRestView()
                 } else {
-                    Toast.makeText(this@ExerciseActivity, "Congratulations! You have completed the 7 minuts workout.", Toast.LENGTH_SHORT).show()
+                    val intent = Intent(this@ExerciseActivity, FinishActivity::class.java)
+                    startActivity(intent)
+                    finish()
                 }
 
             }

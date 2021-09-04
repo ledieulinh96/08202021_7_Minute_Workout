@@ -41,7 +41,7 @@
             android:background="@drawable/item_circular_color_accent_border">
 
             <ProgressBar
-                android:id="@+id/progressBar"
+                android:id="@+id/progressBarRest"
                 style="?android:attr/progressBarStyleHorizontal"
                 android:layout_width="100dp"
                 android:layout_height="100dp"
