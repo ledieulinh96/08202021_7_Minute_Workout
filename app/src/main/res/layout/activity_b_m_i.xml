@@ -169,12 +169,12 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/llDiplayBMIResult"
+            android:id="@+id/llDisplayBMIResult"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="25dp"
             android:orientation="vertical"
-            android:visibility="visible"
+            android:visibility="invisible"
             tools:visibility="visible">
 
             <TextView
@@ -184,7 +184,6 @@
                 android:gravity="center"
                 android:text="YOUR BMI"
                 android:textAllCaps="true"
-                android:visibility="invisible"
                 android:textSize="16sp" />
 
             <TextView

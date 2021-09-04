@@ -10,6 +10,12 @@ import java.math.RoundingMode
 
 class BMIActivity : AppCompatActivity() {
 
+    companion object {
+        val METRIC_UNITS_VIEW = "METRIC_UNITS_VIEW"
+        val US_UNITS_VIEW = "US_UNITS_VIEW"
+    }
+    private var currentVisibleView: String = METRIC_UNITS_VIEW
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_b_m_i)
@@ -26,18 +32,61 @@ class BMIActivity : AppCompatActivity() {
         }
 
         btnCalculateUnits.setOnClickListener {
-            if (validateMetricUnits()) {
-                val heightValue: Float = etMetricUnitHeight.text.toString().toFloat() /100
-                val weightValue: Float = etMetricUnitWeight.text.toString().toFloat()
+            if (currentVisibleView.equals(METRIC_UNITS_VIEW)) {
+                if (validateMetricUnits()) {
+                    val heightValue: Float = etMetricUnitHeight.text.toString().toFloat() / 100
+                    val weightValue: Float = etMetricUnitWeight.text.toString().toFloat()
 
-                val bmi = weightValue / (heightValue*heightValue)
-                displayBMIResult(bmi)
+                    val bmi = weightValue / (heightValue * heightValue)
+                    displayBMIResult(bmi)
+                } else {
+                    Toast.makeText(this, "Please enter valid values", Toast.LENGTH_SHORT).show()
+                }
             } else {
-                Toast.makeText(this, "Please enter valid values", Toast.LENGTH_SHORT).show()
+                if (validateUsUnits()) {
+                    val usUnitHeightValueFeet: String = etUsUnitHeightFeet.text.toString()
+                    val usUnitHeightValueInch: String = etUsUnitHeightInch.text.toString()
+                    val usUnitWeightValue: Float = etUsUnitWeight.text.toString().toFloat()
+                    val heightValue = usUnitHeightValueInch.toFloat() + usUnitHeightValueFeet.toFloat()*12
+                    val bmi = 703 * (usUnitWeightValue / (heightValue * heightValue))
+                    displayBMIResult(bmi)
+                } else {
+                    Toast.makeText(this, "Please enter valid values", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+        makeVisibleMetricUnitsView()
+        rgUnits.setOnCheckedChangeListener{ group, checkedId ->
+            if (checkedId == R.id.rbMetricUnits) {
+                makeVisibleMetricUnitsView()
+            } else {
+                makeVisibleUsUnitsView()
             }
         }
     }
 
+    private fun makeVisibleMetricUnitsView() {
+        currentVisibleView = METRIC_UNITS_VIEW
+        llMetricUnitsView.visibility = View.VISIBLE
+        llUsUnitsView.visibility = View.GONE
+
+        etMetricUnitHeight.text!!.clear()
+        etMetricUnitWeight.text!!.clear()
+
+        llDisplayBMIResult.visibility = View.GONE
+    }
+
+    private fun makeVisibleUsUnitsView() {
+        currentVisibleView = US_UNITS_VIEW
+        llMetricUnitsView.visibility = View.GONE
+        llUsUnitsView.visibility = View.VISIBLE
+
+        etUsUnitWeight.text!!.clear()
+        etUsUnitHeightFeet.text!!.clear()
+        etUsUnitHeightInch.text!!.clear()
+
+        llDisplayBMIResult.visibility = View.GONE
+    }
     private fun displayBMIResult(bmi: Float) {
         val bmiLabel: String
         val bmiDescription: String
@@ -69,10 +118,7 @@ class BMIActivity : AppCompatActivity() {
             bmiDescription = "OMG! You are in a very dangerous condition! Act now!"
         }
 
-        tvYourBMI.visibility = View.VISIBLE
-        tvBMIValue.visibility = View.VISIBLE
-        tvBMIType.visibility = View.VISIBLE
-        tvBMIDescription.visibility = View.VISIBLE
+        llDisplayBMIResult.visibility = View.VISIBLE
 
         // This is used to round of the result value to 2 decimal values after "."
         val bmiValue = BigDecimal(bmi.toDouble()).setScale(2, RoundingMode.HALF_EVEN).toString()
@@ -89,6 +135,23 @@ class BMIActivity : AppCompatActivity() {
             isValid = false
         } else if(etMetricUnitHeight.text.toString().isEmpty()) {
             isValid = false
+        }
+        return isValid
+    }
+
+    private fun validateUsUnits(): Boolean {
+        var isValid = true
+
+        when {
+            etUsUnitWeight.text.toString().isEmpty() -> {
+                isValid = false
+            }
+            etUsUnitHeightFeet.text.toString().isEmpty() -> {
+                isValid = false
+            }
+            etUsUnitHeightInch.text.toString().isEmpty() -> {
+                isValid = false
+            }
         }
         return isValid
     }
