@@ -91,6 +91,10 @@ class ExerciseActivity : AppCompatActivity(),  TextToSpeech.OnInitListener{
 
             override fun onFinish() {
                 currentExercisePosition++;
+
+                exerciseList!![currentExercisePosition].isSelected = true
+                exerciseAdapter!!.notifyDataSetChanged()
+
                 setupExerciseView()
             }
         }.start()
@@ -110,6 +114,9 @@ class ExerciseActivity : AppCompatActivity(),  TextToSpeech.OnInitListener{
 
             override fun onFinish() {
                 if (currentExercisePosition < exerciseList?.size!! - 1) {
+                    exerciseList!![currentExercisePosition].isSelected = false
+                    exerciseList!![currentExercisePosition].isCompleted = true
+                    exerciseAdapter!!.notifyDataSetChanged()
                     setupRestView()
                 } else {
                     Toast.makeText(this@ExerciseActivity, "Congratulations! You have completed the 7 minuts workout.", Toast.LENGTH_SHORT).show()
